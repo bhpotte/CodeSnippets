@@ -1,0 +1,44 @@
+#!/bin/bash
+#SBATCH --job-name="lzw_testMPI"
+#SBATCH --output="lzw_testMPI.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=20
+#SBATCH --account=isu102
+#SBATCH --export=ALL
+#SBATCH -t 01:00:00
+
+# Compile
+mpic++ -g -Wall -o lzwMPI lzwMPI.cpp
+
+echo "=== Running LZW Tests on Expanse ==="
+
+# MPI version
+echo "--sample.txt MPI--"
+echo "Running lzwMPI with 2 process(es)..."
+srun -n 2 ./lzwMPI 2 "sample.txt" "comp.txt" "decomp.txt"
+
+echo "Running lzwMPI with 4 process(es)..."
+srun -n 4 ./lzwMPI 4 "sample.txt" "comp.txt" "decomp.txt"
+
+echo "Running lzwMPI with 10 process(es)..."
+srun -n 10 ./lzwMPI 10 "sample.txt" "comp.txt" "decomp.txt"
+
+echo "Running lzwMPI with 20 process(es)..."
+srun -n 20 ./lzwMPI 20 "sample.txt" "comp.txt" "decomp.txt"
+
+# MPI version
+echo "--guten MPI--"
+echo "Running lzwMPI with 2 process(es)..."
+srun -n 2 ./lzwMPI 2 "gutenfile.txt" "comp.txt" "decomp.txt"
+
+echo "Running lzwMPI with 4 process(es)..."
+srun -n 4 ./lzwMPI 4 "gutenfile.txt" "comp.txt" "decomp.txt"
+
+echo "Running lzwMPI with 10 process(es)..."
+srun -n 10 ./lzwMPI 10 "gutenfile.txt" "comp.txt" "decomp.txt"
+
+echo "Running lzwMPI with 20 process(es)..."
+srun -n 20 ./lzwMPI 20 "gutenfile.txts" "comp.txt" "decomp.txt"
+
+echo "=== All tests completed ==="

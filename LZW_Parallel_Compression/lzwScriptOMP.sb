@@ -1,0 +1,55 @@
+#!/bin/bash
+#SBATCH --job-name="lzw_testOMP"
+#SBATCH --output="lzw_testOMP.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=20
+#SBATCH --account=isu102
+#SBATCH --export=ALL
+#SBATCH -t 01:00:00
+
+
+# Compile
+g++ -fopenmp -o lzwOMP lzwOMP.cpp
+
+echo "=== Running LZW Tests on Expanse ==="
+
+# OMP version
+echo "--sample.txt OMP--"
+
+export OMP_NUM_THREADS=2
+echo "Running lzwOMP with 2 thread(s)..."
+srun ./lzwOMP 2 "sample.txt" "comp.txt" "decomp.txt"
+
+export OMP_NUM_THREADS=4
+echo "Running lzwOMP with 4 thread(s)..."
+srun ./lzwOMP 4 "sample.txt" "comp.txt" "decomp.txt"
+
+export OMP_NUM_THREADS=10
+echo "Running lzwOMP with 10 thread(s)..."
+srun ./lzwOMP 10 "sample.txt" "comp.txt" "decomp.txt"
+
+export OMP_NUM_THREADS=20
+echo "Running lzwOMP with 20 thread(s)..."
+srun ./lzwOMP 20 "sample.txt" "comp.txt" "decomp.txt"
+
+# OMP version
+echo "--guten OMP--"
+
+export OMP_NUM_THREADS=2
+echo "Running lzwOMP with 2 thread(s)..."
+srun ./lzwOMP 2 "gutenfile.txt" "comp.txt" "decomp.txt"
+
+export OMP_NUM_THREADS=4
+echo "Running lzwOMP with 4 thread(s)..."
+srun ./lzwOMP 4 "gutenfile.txt" "comp.txt" "decomp.txt"
+
+export OMP_NUM_THREADS=10
+echo "Running lzwOMP with 10 thread(s)..."
+srun ./lzwOMP 10 "gutenfile.txt" "comp.txt" "decomp.txt"
+
+export OMP_NUM_THREADS=20
+echo "Running lzwOMP with 20 thread(s)..."
+srun ./lzwOMP 20 "gutenfile.txt" "comp.txt" "decomp.txt"
+
+echo "=== All tests completed ==="
