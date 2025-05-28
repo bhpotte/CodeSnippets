@@ -6,6 +6,16 @@
 
 using namespace std;
 
+// simple printing tool
+void printWord(string list)
+{
+    for (int i = 0; i < list.length(); i++)
+    {
+        cout << i;
+    }
+    cout << endl;
+}
+
 int main()
 {
     // variables
@@ -51,12 +61,48 @@ int main()
         chosenWord = wordList[rand() % fileSize];
 
         // fun part; user plays the game
-        int guesses = 0;
+        int guesses = 0; // 6 guesses
         string guessedWord;
+
+        string matches; // [X] = char is in the word. correct position
+                                // [*X] = char is in the word, wrong position
+                                // [_] = letter is not in the word
+
         while(guesses < 6)
         {
             cout << "Enter a five letter word" << endl;
             cin >> guessedWord;
+
+            // compare each char to the chosen word
+            for (int i = 0; i < chosenWord.length(); i++)
+            {
+                // if its in the correct position and is in the word
+                if (guessedWord[i] == chosenWord[i])
+                {
+                    matches[i] = chosenWord[i];
+                }
+                // if its in the word, but wrong position
+                if (guessedWord[i] != chosenWord[i] && chosenWord.find(guessedWord[i]))
+                {
+                    matches[i] = '*'+guessedWord[i];
+                }
+                // else, its not in the word
+                else
+                {
+                    matches[i] = '_';
+                }
+            }
+
+            printWord(matches);
+            if (matches == chosenWord)
+            {
+                cout << "Good Job!" << endl;
+                guesses = 7;
+            }
+            else
+            {
+                guesses++;
+            }
         }
 
         wordFile.close();
