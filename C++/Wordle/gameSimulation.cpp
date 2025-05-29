@@ -6,16 +6,6 @@
 
 using namespace std;
 
-// simple printing tool
-void printWord(string list)
-{
-    for (int i = 0; i < list.length(); i++)
-    {
-        cout << i;
-    }
-    cout << endl;
-}
-
 int main()
 {
     // variables
@@ -61,17 +51,33 @@ int main()
         chosenWord = wordList[rand() % fileSize];
 
         // fun part; user plays the game
-        int guesses = 0; // 6 guesses
+        int guesses = 6; // 6 guesses to use
         string guessedWord;
 
-        string matches; // [X] = char is in the word. correct position
-                                // [*X] = char is in the word, wrong position
+        string matches = "_____"; // [X] = char is in the word. correct position
+                                // [x] = char is in the word, wrong position
                                 // [_] = letter is not in the word
+        string usedLetters = "";
 
-        while(guesses < 6)
+        while(guesses > 0)
         {
+            // helpful stats
+            cout << "Used letters: ";
+            for (int i = 0; i < usedLetters.length(); i++)
+            {
+                cout << usedLetters[i];
+            }
+            cout << endl << "Guesses left: " << guesses << endl;
+
+            // make your guesses
             cout << "Enter a five letter word" << endl;
             cin >> guessedWord;
+
+            // uppercase all letters
+            for (int i = 0; i < guessedWord.length(); i++)
+            {
+                guessedWord[i] = toupper(guessedWord[i]);
+            }
 
             // compare each char to the chosen word
             for (int i = 0; i < chosenWord.length(); i++)
@@ -79,29 +85,44 @@ int main()
                 // if its in the correct position and is in the word
                 if (guessedWord[i] == chosenWord[i])
                 {
-                    matches[i] = chosenWord[i];
+                    matches[i] = guessedWord[i];
                 }
-                // if its in the word, but wrong position
-                if (guessedWord[i] != chosenWord[i] && chosenWord.find(guessedWord[i]))
+                // else if its in the word, but wrong position
+                else if (guessedWord[i] != chosenWord[i] && chosenWord.find(guessedWord[i]) != string::npos)
                 {
-                    matches[i] = '*'+guessedWord[i];
+                    matches[i] = tolower(guessedWord[i]);
                 }
                 // else, its not in the word
                 else
                 {
                     matches[i] = '_';
+                    
+                    // Only add if not already in usedLetters
+                    if (usedLetters.find(guessedWord[i]) == string::npos)
+                    {
+                        usedLetters += guessedWord[i];
+                    }
                 }
             }
 
-            printWord(matches);
-            if (matches == chosenWord)
+            // shows what letters you got right; what position they're in
+            cout << matches << endl << endl;
+            
+            if (guessedWord == chosenWord)
             {
                 cout << "Good Job!" << endl;
-                guesses = 7;
+                guesses == 0;
             }
+            // else, we still got guesses left
             else
             {
-                guesses++;
+                guesses--;
+            }
+
+            // we reached the limit of guesses
+            if (guesses == 0)
+            {
+                cout << "The word was: " << chosenWord << endl;
             }
         }
 
