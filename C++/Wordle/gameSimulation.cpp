@@ -25,8 +25,11 @@ int main()
     // variables
     char userChoice;
     int fileSize = 0;
+    int guesses = 6; // 6 guesses to use
     string chosenWord;
-    string word;
+    string guessedWord;
+    string usedLetters = "";
+    unordered_map<char, int> letterCount;
     unordered_map<char, int> dupes;
     vector<string> wordList;
     ifstream wordFile("fiveOnly.txt");
@@ -56,9 +59,9 @@ int main()
         }
     }
     
-    // normal mode
     if(wordFile.is_open())
     {
+        string word;
         // put contents of file into an array
         while(getline(wordFile, word))
         {
@@ -77,18 +80,14 @@ int main()
         }
 
         // fun part; user plays the game
-        int guesses = 6; // 6 guesses to use
-        string guessedWord;
-
-        string matches = "_____"; // [X] = char is in the word. correct position
-                                // [x] = char is in the word, wrong position
-                                // [_] = letter is not in the word
-        string usedLetters = "";
-
-        unordered_map<char, int> letterCount;
-
         while(guesses > 0)
         {
+            // refresh each match and letterCount
+            string matches = "_____"; // [X] = char is in the word. correct position
+                                // [x] = char is in the word, wrong position
+                                // [_] = letter is not in the word
+            letterCount.clear();
+
             // helpful stats
             cout << "Used letters: ";
             for (int i = 0; i < usedLetters.length(); i++)
@@ -96,8 +95,6 @@ int main()
                 cout << usedLetters[i];
             }
             cout << endl << "Guesses left: " << guesses << endl;
-
-            // make your guesses
 
             bool invalid = true;
 
