@@ -6,10 +6,20 @@
 
 using namespace std;
 
+string wordToUpper(string word)
+{
+    for (int i = 0; i < word.length(); i++)
+    {
+        word[i] = toupper(word[i]);
+    }
+
+    return word;
+}
+
 int main()
 {
     // variables
-    int userChoice;
+    char userChoice;
     int fileSize = 0;
     vector<string> wordList;
     string chosenWord;
@@ -25,12 +35,17 @@ int main()
 
     // error checking
     // if user inputs an invalid option, return to selection
-    while (userChoice != 1 && userChoice !=2)
+    // Note: might add strict mode as an option later down the line
+    while (userChoice != 'Y' && userChoice != 'N')
     {
-        cout << "Press 1 for Normal mode" << endl;
-        cout << "Press 2 for Hard mode" << endl;
+        cout << "Do you want to play Hard Mode? (Y/N)" << endl;
         cin >> userChoice;
-        if (userChoice < 1 || userChoice > 2)
+        userChoice = toupper(userChoice);
+        if (userChoice == 'Y' || userChoice == 'N')
+        {
+            continue; // exit the loop
+        }
+        else
         {
             cout << "Invalid Response. Try Again." << endl;
         }
@@ -70,8 +85,38 @@ int main()
             cout << endl << "Guesses left: " << guesses << endl;
 
             // make your guesses
-            cout << "Enter a five letter word" << endl;
-            cin >> guessedWord;
+            // this will also be the module rules and for different modes to play
+
+            bool invalid = true;
+
+            // rule 1: Word has to be in the word list
+            while(invalid)
+            {
+                cout << "Enter a five letter word:" << endl;
+                cin >> guessedWord;
+                guessedWord = wordToUpper(guessedWord);
+
+                for (int i = 0; i < wordList.size(); i++)
+                {
+                    if (guessedWord == wordList[i])
+                    {
+                        // valid
+                        invalid = false;
+                        
+                    }
+                }
+
+                // hard mode module
+                if (userChoice == 'Y')
+                {
+                    // coming soon
+                }
+
+                if (invalid == true)
+                {
+                    cout << "Word not found in the word list. Try again." << endl;
+                }
+            }
 
             // uppercase all letters
             for (int i = 0; i < guessedWord.length(); i++)
@@ -111,7 +156,7 @@ int main()
             if (guessedWord == chosenWord)
             {
                 cout << "Good Job!" << endl;
-                guesses == 0;
+                guesses = 0;
             }
             // else, we still got guesses left
             else
