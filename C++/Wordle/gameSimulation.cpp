@@ -2,10 +2,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 using namespace std;
 
+// helper functions
+
+// wordToUpper simply prints the word in only uppercase format
 string wordToUpper(string word)
 {
     for (int i = 0; i < word.length(); i++)
@@ -21,9 +25,10 @@ int main()
     // variables
     char userChoice;
     int fileSize = 0;
-    vector<string> wordList;
     string chosenWord;
     string word;
+    unordered_map<char, int> dupes;
+    vector<string> wordList;
     ifstream wordFile("fiveOnly.txt");
 
     // srand variable to force different random words every time we run the program
@@ -65,6 +70,12 @@ int main()
         // randomly select a word from the array
         chosenWord = wordList[rand() % fileSize];
 
+        // update dupes to find if any duplicates are found in the chosen word.
+        for (int i = 0; i < chosenWord.length(); i++)
+        {
+            dupes[chosenWord[i]]++;
+        }
+
         // fun part; user plays the game
         int guesses = 6; // 6 guesses to use
         string guessedWord;
@@ -73,6 +84,8 @@ int main()
                                 // [x] = char is in the word, wrong position
                                 // [_] = letter is not in the word
         string usedLetters = "";
+
+        unordered_map<char, int> letterCount;
 
         while(guesses > 0)
         {
@@ -85,7 +98,6 @@ int main()
             cout << endl << "Guesses left: " << guesses << endl;
 
             // make your guesses
-            // this will also be the module rules and for different modes to play
 
             bool invalid = true;
 
@@ -132,9 +144,12 @@ int main()
                 {
                     matches[i] = guessedWord[i];
                 }
-                // else if its in the word, but wrong position
-                else if (guessedWord[i] != chosenWord[i] && chosenWord.find(guessedWord[i]) != string::npos)
+                // else if its in the word, wrong position, and potentially has multiple same letters
+                else if (guessedWord[i] != chosenWord[i] && 
+                    chosenWord.find(guessedWord[i]) != string::npos && 
+                    letterCount[guessedWord[i]] < dupes[guessedWord[i]])
                 {
+                    letterCount[guessedWord[i]]++;
                     matches[i] = tolower(guessedWord[i]);
                 }
                 // else, its not in the word
