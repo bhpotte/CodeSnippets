@@ -31,6 +31,8 @@ int main()
     string usedLetters = "";
     unordered_map<char, int> letterCount;
     unordered_map<char, int> dupes;
+    unordered_map<char, vector<int>> hardModeCorrectPos;
+    vector<char> hardModeWrongPos;
     vector<string> wordList;
     ifstream wordFile("fiveOnly.txt");
 
@@ -61,13 +63,13 @@ int main()
     
     if(wordFile.is_open())
     {
-        string word;
+        string line;
         // put contents of file into an array
-        while(getline(wordFile, word))
+        while(getline(wordFile, line))
         {
             // determine file size
             fileSize++;
-            wordList.push_back(word);
+            wordList.push_back(line);
         }
 
         // randomly select a word from the array
@@ -96,42 +98,53 @@ int main()
             }
             cout << endl << "Guesses left: " << guesses << endl;
 
+
             bool invalid = true;
 
-            // rule 1: Word has to be in the word list
+
             while(invalid)
             {
                 cout << "Enter a five letter word:" << endl;
                 cin >> guessedWord;
                 guessedWord = wordToUpper(guessedWord);
 
-                for (int i = 0; i < wordList.size(); i++)
+                // rule 1: Word has to be in the word list
+                for (const auto word : wordList)
                 {
-                    if (guessedWord == wordList[i])
-                    {
-                        // valid
+                   if (guessedWord == word)
+                   {
                         invalid = false;
-                        
-                    }
-                }
-
-                // hard mode module
-                if (userChoice == 'Y')
-                {
-                    // coming soon
+                   }
                 }
 
                 if (invalid == true)
                 {
-                    cout << "Word not found in the word list. Try again." << endl;
+                    cout << "Word not in word list." << endl;
+                }
+
+                // hard mode module
+                if (userChoice == 'Y' && guesses >= 1 && invalid == false)
+                {
+                    // rule 2: word has to have the correct letter 
+                    // in the correct position
+                    for (const auto& pair : hardModeCorrectPos)
+                    {
+                        for (int loc : pair.second)
+                        {
+                            if (guessedWord[loc] != pair.first)
+                            {
+                                invalid = true;
+                                cout << "Word must have letter " << pair.first << 
+                                " at position " << loc+1 << endl << endl;
+                            }
+                        }
+                    }
+
                 }
             }
 
-            // uppercase all letters
-            for (int i = 0; i < guessedWord.length(); i++)
-            {
-                guessedWord[i] = toupper(guessedWord[i]);
-            }
+            // to avoid duplicates
+            hardModeCorrectPos.clear();
 
             // compare each char to the chosen word
             for (int i = 0; i < chosenWord.length(); i++)
@@ -139,13 +152,24 @@ int main()
                 // if its in the correct position and is in the word
                 if (guessedWord[i] == chosenWord[i])
                 {
+                    // if we are in hard mode, add the letter to the map with correct position
+                    if (userChoice == 'Y')
+                    {
+                        hardModeCorrectPos[guessedWord[i]].push_back(i);
+                    }
+
                     matches[i] = guessedWord[i];
                 }
                 // else if its in the word, wrong position, and potentially has multiple same letters
-                else if (guessedWord[i] != chosenWord[i] && 
-                    chosenWord.find(guessedWord[i]) != string::npos && 
+                else if (chosenWord.find(guessedWord[i]) != string::npos && 
                     letterCount[guessedWord[i]] < dupes[guessedWord[i]])
                 {
+                    // if we are in hard mode, if wrong position, add to list
+                    if (userChoice == 'Y')
+                    {
+                        hardModeWrongPos.push_back(guessedWord[i]);
+                    }
+        
                     letterCount[guessedWord[i]]++;
                     matches[i] = tolower(guessedWord[i]);
                 }
