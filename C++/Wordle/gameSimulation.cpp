@@ -7,8 +7,6 @@
 
 using namespace std;
 
-// helper functions
-
 // wordToUpper simply prints the word in only uppercase format
 string wordToUpper(string word)
 {
@@ -108,6 +106,13 @@ int main()
                 cin >> guessedWord;
                 guessedWord = wordToUpper(guessedWord);
 
+                // rule 0: Word has to be 5 letters
+                if (guessedWord.length() != 5)
+                {
+                    cout << "Word must be 5 letters" << endl << endl;
+                    invalid = true;
+                }
+
                 // rule 1: Word has to be in the word list
                 for (const auto word : wordList)
                 {
@@ -117,15 +122,15 @@ int main()
                    }
                 }
 
-                if (invalid == true)
+                if (invalid == true && guessedWord.length() == 5)
                 {
-                    cout << "Word not in word list." << endl;
+                    cout << "Word not in word list." << endl << endl;
                 }
 
                 // hard mode module
-                if (userChoice == 'Y' && guesses >= 1 && invalid == false)
+                if (userChoice == 'Y' && guesses >= 1 && invalid == false && guessedWord.length() == 5)
                 {
-                    // rule 2: word has to have the correct letter 
+                    // rule 2: word has to have the correct guessed letter 
                     // in the correct position
                     for (const auto& pair : hardModeCorrectPos)
                     {
@@ -134,9 +139,24 @@ int main()
                             if (guessedWord[loc] != pair.first)
                             {
                                 invalid = true;
-                                cout << "Word must have letter " << pair.first << 
+                                cout << "Word must have the letter " << pair.first << 
                                 " at position " << loc+1 << endl << endl;
                             }
+                        }
+                    }
+
+                    // rule 3: word has to have a letter IF the guessed word
+                    // has it identified (doesn't have to be in the right position)
+                    for (const auto letter : hardModeWrongPos)
+                    {
+                        if (guessedWord.find(letter) != string::npos)
+                        {
+                            invalid = false;
+                        }
+                        else
+                        {
+                            cout << "Word must have the letter " << letter << endl << endl;
+                            invalid = true;
                         }
                     }
 
@@ -145,6 +165,7 @@ int main()
 
             // to avoid duplicates
             hardModeCorrectPos.clear();
+            hardModeWrongPos.clear();
 
             // compare each char to the chosen word
             for (int i = 0; i < chosenWord.length(); i++)
