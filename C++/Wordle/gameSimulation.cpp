@@ -1,3 +1,11 @@
+/*
+Bugs to decode:
+sometimes the guessed word would give incorrect hints ( a_A__ for FLAWN)
+*/
+
+
+
+
 
 #include <iostream>
 #include <fstream>
